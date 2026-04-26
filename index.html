@@ -79,10 +79,11 @@ header {
 h1 {
   font-family: 'Fraunces', serif;
   font-weight: 300;
-  font-size: clamp(2.8rem, 7vw, 5.5rem);
-  line-height: 0.95;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.05;
   letter-spacing: -0.03em;
   font-variation-settings: "opsz" 144, "SOFT" 50;
+  white-space: nowrap;
 }
 
 h1 .ts { color: var(--ts); font-style: italic; font-weight: 400; }
@@ -333,6 +334,7 @@ footer a { color: var(--accent); }
 @media (max-width: 800px) {
   header { padding: 2.5rem 1.25rem 2rem; }
   .header-inner { grid-template-columns: 1fr; }
+  h1 { white-space: normal; font-size: clamp(2rem, 8vw, 3rem); }
   .meta { text-align: left; }
   .toc { padding: 1.5rem 1.25rem; }
   .toc-inner { grid-template-columns: 1fr; gap: 1rem; }
@@ -352,8 +354,8 @@ footer a { color: var(--accent); }
     <div>
       <div class="eyebrow">A side-by-side syntax comparison</div>
       <h1>
-        <span class="ts">TypeScript</span><br>
-        <span class="like">is like</span><br>
+        <span class="ts">TypeScript</span>
+        <span class="like">is like</span>
         <span class="java">Java</span>
       </h1>
       <p class="subtitle">Don't take language likeness too seriously. Both are statically typed, class-based, and curly-braced — close enough to make this a useful Rosetta Stone.</p>
