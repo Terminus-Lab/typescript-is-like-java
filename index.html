@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript is like Java — A side-by-side syntax comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Geist:wght@300..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<style>
+:root {
+  --bg: #f3ece0;
+  --bg-deep: #ebe1cf;
+  --ink: #1a1714;
+  --ink-soft: #4a423a;
+  --rule: #1a1714;
+  --ts: #2d5b9e;
+  --ts-tint: #d8e4f3;
+  --java: #c14a30;
+  --java-tint: #f3dccd;
+  --code-bg: #1c1f26;
+  --accent: #b8472b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Geist', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(193, 74, 48, 0.04), transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(45, 91, 158, 0.04), transparent 40%);
+}
+
+/* HEADER */
+header {
+  border-bottom: 1px solid var(--rule);
+  padding: 4rem 2rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: end;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink-soft);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 1.5rem;
+  height: 1px;
+  background: var(--ink);
+  display: inline-block;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+
+h1 .ts { color: var(--ts); font-style: italic; font-weight: 400; }
+h1 .java { color: var(--java); font-style: italic; font-weight: 400; }
+h1 .like { font-weight: 200; }
+
+.subtitle {
+  margin-top: 1.5rem;
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  max-width: 38rem;
+}
+
+.meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  text-align: right;
+  line-height: 1.8;
+}
+
+.meta strong { color: var(--ink); font-weight: 500; }
+
+/* TABLE OF CONTENTS */
+.toc {
+  border-bottom: 1px solid var(--rule);
+  padding: 2rem;
+}
+
+.toc-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3rem;
+  align-items: baseline;
+}
+
+.toc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.toc-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2rem;
+}
+
+.toc-list a {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1.05rem;
+  position: relative;
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+}
+
+.toc-list a:hover { color: var(--accent); }
+.toc-list a::after {
+  content: '·';
+  margin-left: 1rem;
+  color: var(--ink-soft);
+}
+.toc-list li:last-child a::after { content: ''; }
+
+/* MAIN */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+section {
+  border-bottom: 1px solid var(--rule);
+  padding: 4rem 0;
+}
+
+.section-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed rgba(26, 23, 20, 0.3);
+}
+
+.section-num {
+  font-family: 'Fraunces', serif;
+  font-size: 4rem;
+  font-weight: 200;
+  font-style: italic;
+  line-height: 1;
+  color: var(--accent);
+}
+
+h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144;
+}
+
+.section-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--ink-soft);
+  margin-top: 0.5rem;
+}
+
+/* COMPARISON */
+.comparison {
+  margin-bottom: 3rem;
+}
+
+.comparison:last-child { margin-bottom: 0; }
+
+h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+h3::before {
+  content: '§';
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.comparison-note {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.lang {
+  background: var(--code-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 0.6rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: 500;
+}
+
+.lang.typescript .badge {
+  background: var(--ts);
+}
+
+.lang.java .badge {
+  background: var(--java);
+}
+
+.badge::after {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  text-transform: lowercase;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+  font-weight: 300;
+  opacity: 0.85;
+}
+
+.lang.typescript .badge::after { content: 'left'; }
+.lang.java .badge::after { content: 'right'; }
+
+.lang pre {
+  margin: 0 !important;
+  padding: 1.25rem !important;
+  background: var(--code-bg) !important;
+  flex: 1;
+  overflow-x: auto;
+  font-size: 0.85rem !important;
+  line-height: 1.55 !important;
+}
+
+.lang code {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.85rem !important;
+}
+
+/* Custom Prism overrides */
+.token.comment {
+  color: #7a8290 !important;
+  font-style: italic;
+}
+
+/* FOOTER */
+footer {
+  padding: 4rem 2rem;
+  text-align: center;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+footer .ornament {
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  letter-spacing: 1rem;
+}
+
+footer p { font-size: 0.95rem; line-height: 1.8; }
+footer a { color: var(--accent); }
+
+/* MOBILE */
+@media (max-width: 800px) {
+  header { padding: 2.5rem 1.25rem 2rem; }
+  .header-inner { grid-template-columns: 1fr; }
+  .meta { text-align: left; }
+  .toc { padding: 1.5rem 1.25rem; }
+  .toc-inner { grid-template-columns: 1fr; gap: 1rem; }
+  main { padding: 0 1.25rem; }
+  section { padding: 2.5rem 0; }
+  .section-header { grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 2rem; }
+  .section-num { font-size: 2.5rem; }
+  .pair { grid-template-columns: 1fr; }
+  .lang pre { font-size: 0.8rem !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="eyebrow">A side-by-side syntax comparison</div>
+      <h1>
+        <span class="ts">TypeScript</span><br>
+        <span class="like">is like</span><br>
+        <span class="java">Java</span>
+      </h1>
+      <p class="subtitle">Don't take language likeness too seriously. Both are statically typed, class-based, and curly-braced — close enough to make this a useful Rosetta Stone.</p>
+    </div>
+    <div class="meta">
+      <strong>VOL. 01</strong><br>
+      Reference Edition<br>
+      TS 5.x · Java 21+
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="toc-label">Contents</span>
+    <ul class="toc-list">
+      <li><a href="#basics">Basics</a></li>
+      <li><a href="#functions">Functions</a></li>
+      <li><a href="#collections">Collections</a></li>
+      <li><a href="#operations">Operations</a></li>
+      <li><a href="#classes">Classes</a></li>
+      <li><a href="#types">Types</a></li>
+      <li><a href="#exceptions">Exceptions</a></li>
+      <li><a href="#null">Null</a></li>
+      <li><a href="#async">Async</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ BASICS ============ -->
+<section id="basics">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <div>
+      <h2>Basics</h2>
+      <div class="section-meta">Hello world · Variables · Types · Control flow</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Hello World</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">console.log("Hello, world!");</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, world!");
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Variables and Constants</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">let myVariable = 42;
+myVariable = 50;
+
+const myConstant = 42;</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var myVariable = 42;
+myVariable = 50;
+
+final var myConstant = 42;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Explicit Types</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const explicitDouble: number = 70.0;
+const explicitString: string = "Hello";</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">double explicitDouble = 70.0;
+String explicitString = "Hello";</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Type Coercion</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const label = "The width is ";
+const width = 94;
+const widthLabel = label + width;
+// "The width is 94"</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var label = "The width is ";
+var width = 94;
+var widthLabel = label + width;
+// "The width is 94"</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>String Interpolation</h3>
+    <p class="comparison-note">Java has no built-in string interpolation. Use <code>String.format</code> or concatenation.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const apples = 3;
+const oranges = 5;
+const fruitSummary =
+    `I have ${apples + oranges} pieces of fruit.`;</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var apples = 3;
+var oranges = 5;
+var fruitSummary = String.format(
+    "I have %d pieces of fruit.", apples + oranges);
+
+// Or simple concatenation
+var summary2 = "I have " + (apples + oranges) + " pieces.";</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>If Statement</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const age = 42;
+
+if (age < 10) {
+    console.log("You're too young to watch this movie");
+} else if (age < 13) {
+    console.log("You can watch this movie with a parent");
+} else {
+    console.log("You can watch this movie");
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var age = 42;
+
+if (age < 10) {
+    System.out.println("You're too young to watch this movie");
+} else if (age < 13) {
+    System.out.println("You can watch this movie with a parent");
+} else {
+    System.out.println("You can watch this movie");
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Ternary</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const loaded = true;
+const status = loaded ? "Ready" : "Loading...";
+// "Ready"</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var loaded = true;
+var status = loaded ? "Ready" : "Loading...";
+// "Ready"</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Switch / Pattern Matching</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const nb = 42;
+let text: string;
+
+switch (true) {
+    case nb < 10:    text = "single digit"; break;
+    case nb < 100:   text = "double digits"; break;
+    case nb < 1000:  text = "triple digits"; break;
+    default:         text = "four or more digits";
+}
+// "double digits"</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var nb = 42;
+// Switch expression with pattern matching (Java 21+)
+var text = switch (nb) {
+    case Integer n when n < 10   -> "single digit";
+    case Integer n when n < 100  -> "double digits";
+    case Integer n when n < 1000 -> "triple digits";
+    default                      -> "four or more digits";
+};
+// "double digits"</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FUNCTIONS ============ -->
+<section id="functions">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div>
+      <h2>Functions</h2>
+      <div class="section-meta">Definitions · Lambdas · Higher-order · Tuples</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Functions</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function greet(name: string, day: string): string {
+    return `Hello ${name}, today is ${day}.`;
+}
+
+const text = greet("Bob", "Tuesday");
+// Hello Bob, today is Tuesday.</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">String greet(String name, String day) {
+    return String.format("Hello %s, today is %s.", name, day);
+}
+
+var text = greet("Bob", "Tuesday");
+// Hello Bob, today is Tuesday.</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Single-Expression Functions</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const double = (value: number) => value * 2;
+
+const result = double(4);
+// 8</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Java requires a Function reference
+Function&lt;Integer, Integer&gt; doubleIt = value -> value * 2;
+
+var result = doubleIt.apply(4);
+// 8</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Default Arguments</h3>
+    <p class="comparison-note">Java has no default arguments. Use overloading to simulate.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function displayGreeting(message: string, name: string = "Guest") {
+    console.log(`Hello ${name}, ${message}`);
+}
+
+displayGreeting("welcome!");
+// Hello Guest, welcome!</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">void displayGreeting(String message, String name) {
+    System.out.println("Hello " + name + ", " + message);
+}
+
+void displayGreeting(String message) {
+    displayGreeting(message, "Guest");
+}
+
+displayGreeting("welcome!");
+// Hello Guest, welcome!</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Optional Parameters</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function greet(name: string, greeting?: string) {
+    console.log(`${greeting ?? "Hello"} ${name}`);
+}
+
+greet("Anna");          // Hello Anna
+greet("Anna", "Hi");    // Hi Anna</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Use overloading or Optional&lt;T&gt;
+void greet(String name) {
+    greet(name, "Hello");
+}
+
+void greet(String name, String greeting) {
+    System.out.println(greeting + " " + name);
+}
+
+greet("Anna");        // Hello Anna
+greet("Anna", "Hi");  // Hi Anna</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Variable Number of Arguments</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function sumOf(...numbers: number[]): number {
+    return numbers.reduce((a, b) => a + b, 0);
+}
+
+const sum = sumOf(42, 597, 12);
+// 651</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">int sumOf(int... numbers) {
+    return Arrays.stream(numbers).sum();
+}
+
+var sum = sumOf(42, 597, 12);
+// 651</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Higher-Order Function — Return a Function</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function makeIncrementer(): (n: number) => number {
+    return n => n + 1;
+}
+
+const increment = makeIncrementer();
+const result = increment(7);
+// 8</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">Function&lt;Integer, Integer&gt; makeIncrementer() {
+    return n -> n + 1;
+}
+
+var increment = makeIncrementer();
+var result = increment.apply(7);
+// 8</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Higher-Order Function — Function as Parameter</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function transform(initial: string, f: (s: string) => string) {
+    return f(initial);
+}
+
+const result = transform("hello", x => x.toUpperCase());
+// HELLO</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">String transform(String initial, Function&lt;String, String&gt; f) {
+    return f.apply(initial);
+}
+
+var result = transform("hello", String::toUpperCase);
+// HELLO</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Tuple / Multi-Value Return</h3>
+    <p class="comparison-note">TypeScript has tuples and destructuring. Java uses records.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function getGasPrices(): [number, number, number] {
+    return [3.59, 3.69, 3.79];
+}
+
+const [a, b, c] = getGasPrices();</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">record GasPrices(double a, double b, double c) {}
+
+GasPrices getGasPrices() {
+    return new GasPrices(3.59, 3.69, 3.79);
+}
+
+// Record pattern destructuring (Java 21+)
+var prices = getGasPrices();
+if (prices instanceof GasPrices(var a, var b, var c)) {
+    // use a, b, c
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COLLECTIONS ============ -->
+<section id="collections">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <div>
+      <h2>Collections</h2>
+      <div class="section-meta">Arrays · Lists · Maps · Sets · Iteration</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Arrays</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const shoppingList = ["catfish", "water", "tulips", "blue paint"];
+shoppingList[1] = "bottle of water";</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">String[] shoppingList = {"catfish", "water", "tulips", "blue paint"};
+shoppingList[1] = "bottle of water";</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Lists</h3>
+    <p class="comparison-note">TypeScript arrays are dynamic. Java distinguishes immutable from mutable lists.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">// Immutable (by convention)
+const readonly: readonly string[] =
+    ["catfish", "water", "tulips"];
+
+// Mutable
+const list: string[] = ["catfish", "water", "tulips"];
+list[1] = "bottle of water";
+list.push("bucket");</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Immutable
+List&lt;String&gt; readonly = List.of("catfish", "water", "tulips");
+
+// Mutable
+var list = new ArrayList&lt;&gt;(List.of("catfish", "water", "tulips"));
+list.set(1, "bottle of water");
+list.add("bucket");</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Maps / Dictionaries</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const occupations: Record&lt;string, string&gt; = {
+    "Malcolm": "Captain",
+    "Kaylee": "Mechanic"
+};
+
+// Or Map class
+const map = new Map&lt;string, string&gt;([
+    ["Malcolm", "Captain"],
+    ["Kaylee", "Mechanic"]
+]);
+map.set("Jayne", "Public Relations");</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Immutable
+Map&lt;String, String&gt; occupations = Map.of(
+    "Malcolm", "Captain",
+    "Kaylee", "Mechanic"
+);
+
+// Mutable
+var map = new HashMap&lt;String, String&gt;();
+map.put("Malcolm", "Captain");
+map.put("Kaylee", "Mechanic");
+map.put("Jayne", "Public Relations");</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Sets</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const tags = new Set&lt;string&gt;(["a", "b", "c"]);
+tags.add("d");
+tags.has("a"); // true</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var tags = new HashSet&lt;&gt;(Set.of("a", "b", "c"));
+tags.add("d");
+tags.contains("a"); // true</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Empty Collections</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const emptyArray: string[] = [];
+const emptyMap: Record&lt;string, number&gt; = {};
+const emptySet = new Set&lt;string&gt;();</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">List&lt;String&gt; emptyList = new ArrayList&lt;&gt;();
+Map&lt;String, Integer&gt; emptyMap = new HashMap&lt;&gt;();
+Set&lt;String&gt; emptySet = new HashSet&lt;&gt;();
+
+// Read-only
+List&lt;String&gt; immutable = List.of();</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>For-Each Iteration</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const names = ["Anna", "Alex", "Brian", "Jack"];
+
+for (const name of names) {
+    console.log(`Person is called ${name}`);
+}
+
+names.forEach(name =>
+    console.log(`Person is called ${name}`));</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var names = List.of("Anna", "Alex", "Brian", "Jack");
+
+for (var name : names) {
+    System.out.println("Person is called " + name);
+}
+
+names.forEach(name ->
+    System.out.println("Person is called " + name));</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Indexed Iteration</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const names = ["Anna", "Alex", "Brian", "Jack"];
+
+for (let i = 0; i < names.length; i++) {
+    console.log(`Person ${i + 1} is called ${names[i]}`);
+}
+
+// Or with entries()
+for (const [i, name] of names.entries()) {
+    console.log(`Person ${i + 1} is called ${name}`);
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var names = List.of("Anna", "Alex", "Brian", "Jack");
+
+for (int i = 0; i < names.size(); i++) {
+    System.out.printf("Person %d is called %s%n", i + 1, names.get(i));
+}
+
+// Or with IntStream
+IntStream.range(0, names.size()).forEach(i ->
+    System.out.printf("Person %d is called %s%n", i + 1, names.get(i)));</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Slicing</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const names = ["Anna", "Alex", "Brian", "Jill", "Jack"];
+
+// From index 1 up to (but not including) the last
+const middle = names.slice(1, -1);
+// ["Alex", "Brian", "Jill"]</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var names = List.of("Anna", "Alex", "Brian", "Jill", "Jack");
+
+// subList(fromInclusive, toExclusive)
+var middle = names.subList(1, names.size() - 1);
+// [Alex, Brian, Jill]</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COLLECTION OPERATIONS ============ -->
+<section id="operations">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div>
+      <h2>Operations</h2>
+      <div class="section-meta">Map · Filter · Reduce · Sort · Streams</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Map</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const numbers = [20, 19, 7, 12];
+const multiplied = numbers.map(n => 3 * n);
+// [60, 57, 21, 36]</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var numbers = List.of(20, 19, 7, 12);
+var multiplied = numbers.stream()
+    .map(n -> 3 * n)
+    .toList();
+// [60, 57, 21, 36]</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Filter</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const numbers = [1, 2, 3, 4, 5];
+const evens = numbers.filter(n => n % 2 === 0);
+// [2, 4]</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var numbers = List.of(1, 2, 3, 4, 5);
+var evens = numbers.stream()
+    .filter(n -> n % 2 == 0)
+    .toList();
+// [2, 4]</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Sort</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">// Note: default sort is lexicographic, even for numbers
+const ordered = [1, 5, 3, 12, 2].sort((a, b) => a - b);
+// [1, 2, 3, 5, 12]</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var ordered = Stream.of(1, 5, 3, 12, 2)
+    .sorted()
+    .toList();
+// [1, 2, 3, 5, 12]</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Reduce</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const total = [1, 2, 3, 4].reduce((acc, n) => acc + n, 0);
+// 10</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var total = Stream.of(1, 2, 3, 4)
+    .reduce(0, Integer::sum);
+// 10</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Filter / Group By / Average</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">type SensorData = { id: number; location: string; value: number };
+
+const data: SensorData[] = [
+    { id: 1, location: "A", value: 2.89 },
+    { id: 2, location: "B", value: 12.01 },
+    { id: 3, location: "B", value: 11.89 },
+    { id: 4, location: "A", value: 3.11 },
+    { id: 5, location: "A", value: -456.0 }
+];
+
+const grouped = data
+    .filter(d => d.value > -50)
+    .reduce&lt;Record&lt;string, number[]&gt;&gt;((acc, d) => {
+        (acc[d.location] ??= []).push(d.value);
+        return acc;
+    }, {});
+
+const avgs = Object.entries(grouped).map(([location, values]) => ({
+    location,
+    avg: values.reduce((a, b) => a + b, 0) / values.length
+}));
+
+// [{ location: "A", avg: 3.0 }, { location: "B", avg: 11.95 }]</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">record SensorData(int id, String location, double value) {}
+record LocationAvg(String location, double avg) {}
+
+var data = List.of(
+    new SensorData(1, "A", 2.89),
+    new SensorData(2, "B", 12.01),
+    new SensorData(3, "B", 11.89),
+    new SensorData(4, "A", 3.11),
+    new SensorData(5, "A", -456.0)
+);
+
+var avgs = data.stream()
+    .filter(d -> d.value() > -50.0)
+    .collect(Collectors.groupingBy(
+        SensorData::location,
+        Collectors.averagingDouble(SensorData::value)))
+    .entrySet().stream()
+    .map(e -> new LocationAvg(e.getKey(), e.getValue()))
+    .toList();
+
+// [LocationAvg[location=A, avg=3.0],
+//  LocationAvg[location=B, avg=11.95]]</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Lazy Evaluation</h3>
+    <p class="comparison-note">TypeScript array methods evaluate eagerly. Java streams are lazy until a terminal operation.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">// Eager: every filter and map runs immediately
+const items = [1, 2, 3, 4]
+    .filter(n => { console.log(`Filter ${n}`); return n % 2 === 1; })
+    .map(n => { console.log(`Map ${n}`); return n * 2; });
+
+// Filter 1, Filter 2, Filter 3, Filter 4
+// Map 1, Map 3</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Lazy: nothing runs until toList()
+var items = Stream.of(1, 2, 3, 4)
+    .filter(n -> { System.out.println("Filter " + n); return n % 2 == 1; })
+    .map(n -> { System.out.println("Map " + n); return n * 2; })
+    .toList();
+
+// Filter 1, Map 1,
+// Filter 2,
+// Filter 3, Map 3,
+// Filter 4</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLASSES ============ -->
+<section id="classes">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div>
+      <h2>Classes</h2>
+      <div class="section-meta">Declaration · Inheritance · Records · Interfaces</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Declaration</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">class Shape {
+    numberOfSides = 0;
+
+    simpleDescription(): string {
+        return `A shape with ${this.numberOfSides} sides.`;
+    }
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">class Shape {
+    int numberOfSides = 0;
+
+    String simpleDescription() {
+        return "A shape with " + numberOfSides + " sides.";
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Usage</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const shape = new Shape();
+shape.numberOfSides = 7;
+const desc = shape.simpleDescription();
+// A shape with 7 sides.</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var shape = new Shape();
+shape.numberOfSides = 7;
+var desc = shape.simpleDescription();
+// A shape with 7 sides.</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Subclass</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">class NamedShape {
+    numberOfSides = 0;
+    constructor(public name: string) {}
+
+    simpleDescription(): string {
+        return `A shape with ${this.numberOfSides} sides.`;
+    }
+}
+
+class Square extends NamedShape {
+    constructor(public sideLength: number, name: string) {
+        super(name);
+        this.numberOfSides = 4;
+    }
+
+    area(): number {
+        return this.sideLength ** 2;
+    }
+
+    simpleDescription(): string {
+        return `A square with sides of length ${this.sideLength}.`;
+    }
+}
+
+const square = new Square(5.2, "My square");</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">class NamedShape {
+    protected int numberOfSides = 0;
+    protected final String name;
+
+    NamedShape(String name) { this.name = name; }
+
+    String simpleDescription() {
+        return "A shape with " + numberOfSides + " sides.";
+    }
+}
+
+class Square extends NamedShape {
+    private final double sideLength;
+
+    Square(double sideLength, String name) {
+        super(name);
+        this.sideLength = sideLength;
+        this.numberOfSides = 4;
+    }
+
+    double area() { return Math.pow(sideLength, 2); }
+
+    @Override
+    String simpleDescription() {
+        return "A square with sides of length " + sideLength + ".";
+    }
+}
+
+var square = new Square(5.2, "My square");</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Data Class / Record</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">// Type alias for a plain object shape
+type Customer = { id: number; name: string };
+
+const customer: Customer = { id: 1, name: "Sachin" };
+
+const name = customer.name;
+customer.id = 2; // Allowed unless 'readonly'</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Records are immutable by default (Java 14+)
+record Customer(int id, String name) {}
+
+var customer = new Customer(1, "Sachin");
+
+var name = customer.name();
+// customer.id = 2; // Error: records are immutable</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Interfaces</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">interface Nameable {
+    name(): string;
+}
+
+function genericFunction&lt;T extends Nameable&gt;(x: T) {
+    console.log("Name is " + x.name());
+}
+
+class Person implements Nameable {
+    name(): string {
+        return "Person A";
+    }
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">interface Nameable {
+    String name();
+}
+
+&lt;T extends Nameable&gt; void genericFunction(T x) {
+    System.out.println("Name is " + x.name());
+}
+
+class Person implements Nameable {
+    @Override
+    public String name() {
+        return "Person A";
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Abstract Class</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">abstract class Animal {
+    abstract makeSound(): string;
+
+    describe(): string {
+        return `This animal says ${this.makeSound()}`;
+    }
+}
+
+class Dog extends Animal {
+    makeSound() { return "Woof"; }
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">abstract class Animal {
+    abstract String makeSound();
+
+    String describe() {
+        return "This animal says " + makeSound();
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    String makeSound() { return "Woof"; }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Static Members</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">class MathUtil {
+    static readonly PI = 3.14159;
+
+    static circleArea(radius: number): number {
+        return MathUtil.PI * radius ** 2;
+    }
+}
+
+const area = MathUtil.circleArea(5);</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">class MathUtil {
+    static final double PI = 3.14159;
+
+    static double circleArea(double radius) {
+        return PI * Math.pow(radius, 2);
+    }
+}
+
+var area = MathUtil.circleArea(5);</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TYPES ============ -->
+<section id="types">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <div>
+      <h2>Types</h2>
+      <div class="section-meta">Checking · Casting · Enums · Unions</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Type Checking</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">let movieCount = 0;
+let songCount = 0;
+
+for (const item of library) {
+    if (item instanceof Movie) {
+        movieCount++;
+    } else if (item instanceof Song) {
+        songCount++;
+    }
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">var movieCount = 0;
+var songCount = 0;
+
+for (var item : library) {
+    if (item instanceof Movie) {
+        movieCount++;
+    } else if (item instanceof Song) {
+        songCount++;
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Type Narrowing / Pattern Matching</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">for (const current of library) {
+    if (current instanceof Movie) {
+        // TS narrows `current` to Movie
+        console.log(`Movie: '${current.name}', dir: ${current.director}`);
+    }
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">for (var current : library) {
+    // Pattern matching with instanceof (Java 16+)
+    if (current instanceof Movie movie) {
+        System.out.printf("Movie: '%s', dir: %s%n",
+            movie.name(), movie.director());
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Casting</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">// Unsafe (compile-time only — no runtime check)
+const circle = shape as Circle;
+
+// Safe with type guard
+if (shape instanceof Circle) {
+    const circle: Circle = shape; // narrowed
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">// Unsafe (throws ClassCastException at runtime)
+Circle circle = (Circle) shape;
+
+// Safe with pattern matching
+if (shape instanceof Circle circle) {
+    // use circle
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Enums</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">enum Direction {
+    North,
+    South,
+    East,
+    West
+}
+
+const dir = Direction.North;
+
+// Or string literal union (more idiomatic in modern TS)
+type Direction2 = "North" | "South" | "East" | "West";
+const dir2: Direction2 = "North";</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">enum Direction {
+    NORTH, SOUTH, EAST, WEST
+}
+
+var dir = Direction.NORTH;
+
+// Java enums can have fields and methods
+enum Planet {
+    EARTH(5.97e24), MARS(6.42e23);
+
+    private final double mass;
+    Planet(double mass) { this.mass = mass; }
+    public double mass() { return mass; }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Union Types / Sealed Interfaces</h3>
+    <p class="comparison-note">TypeScript has structural unions. Java models alternatives with sealed interfaces.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">type Shape =
+    | { kind: "circle"; radius: number }
+    | { kind: "square"; side: number };
+
+function area(s: Shape): number {
+    switch (s.kind) {
+        case "circle": return Math.PI * s.radius ** 2;
+        case "square": return s.side ** 2;
+    }
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">sealed interface Shape permits Circle, Square {}
+record Circle(double radius) implements Shape {}
+record Square(double side) implements Shape {}
+
+double area(Shape s) {
+    return switch (s) {
+        case Circle c -> Math.PI * Math.pow(c.radius(), 2);
+        case Square sq -> Math.pow(sq.side(), 2);
+    };
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXCEPTIONS ============ -->
+<section id="exceptions">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div>
+      <h2>Exceptions</h2>
+      <div class="section-meta">Try · Catch · Finally · Checked exceptions</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Exception Handling</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">try {
+    // some code
+} catch (e) {
+    if (e instanceof CustomError && e.code === 404) {
+        // handle 404
+    } else if (e instanceof Error) {
+        // handle other errors
+    }
+} finally {
+    // optional finally block
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">try {
+    // some code
+} catch (CustomException e) {
+    if (e.getCode() == 404) {
+        // handle 404
+    } else {
+        // handle other CustomException
+    }
+} catch (Exception e) {
+    // handle the rest
+} finally {
+    // optional finally block
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Throwing Exceptions</h3>
+    <p class="comparison-note">Java distinguishes checked exceptions (must be declared or caught) from unchecked. TypeScript doesn't.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">function parseAge(input: string): number {
+    const n = parseInt(input);
+    if (isNaN(n)) {
+        throw new Error(`Invalid age: ${input}`);
+    }
+    return n;
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">int parseAge(String input) throws NumberFormatException {
+    try {
+        return Integer.parseInt(input);
+    } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("Invalid age: " + input, e);
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NULL ============ -->
+<section id="null">
+  <div class="section-header">
+    <div class="section-num">08</div>
+    <div>
+      <h2>Null</h2>
+      <div class="section-meta">Nullable types · Optional chaining · Coalescing</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Nullable Types</h3>
+    <p class="comparison-note">TypeScript expresses nullability in the type. Java references are nullable by default — wrap in <code>Optional&lt;T&gt;</code> to make absence explicit.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">type Measurement = { celsius: number };
+
+let data: Measurement = null;        // Error in strict mode
+let maybe: Measurement | null = null; // OK
+
+function printMaybeNull(data: Measurement | null) {
+    if (data === null) return;
+    console.log(data.celsius);
+}
+
+function printNoNull(data: Measurement) {
+    console.log(data.celsius);
+}</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">record Measurement(double celsius) {}
+
+// All references are nullable by default
+Measurement data = null; // Always allowed
+
+void printMaybeNull(Measurement data) {
+    if (data == null) return;
+    System.out.println(data.celsius());
+}
+
+// Use Optional&lt;T&gt; to express absence in the type
+void printOptional(Optional&lt;Measurement&gt; data) {
+    data.ifPresent(d -> System.out.println(d.celsius()));
+}</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Optional Chaining</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">type DataPoint = {
+    id: number;
+    celsius: number;
+    child?: DataPoint;
+};
+
+const data: DataPoint = {
+    id: 1, celsius: 22.1,
+    child: { id: 2, celsius: 22.8 }
+};
+
+const result = data.child?.child?.celsius;
+// undefined</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">record DataPoint(int id, double celsius, DataPoint child) {}
+
+var data = new DataPoint(1, 22.1,
+    new DataPoint(2, 22.8, null));
+
+// No null-safe operator — chain via Optional
+var result = Optional.ofNullable(data.child())
+    .map(DataPoint::child)
+    .map(DataPoint::celsius);
+// Optional.empty</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Nullish Coalescing</h3>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">const value: string | null = null;
+const result = value ?? "default";
+// "default"</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">String value = null;
+var result = value != null ? value : "default";
+
+// Or with Optional
+var result2 = Optional.ofNullable(value).orElse("default");
+// "default"</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ASYNC ============ -->
+<section id="async">
+  <div class="section-header">
+    <div class="section-num">09</div>
+    <div>
+      <h2>Async</h2>
+      <div class="section-meta">Promises · CompletableFuture · Virtual threads</div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h3>Async / Await</h3>
+    <p class="comparison-note">TypeScript has native <code>async/await</code>. Java offers <code>CompletableFuture</code> chains, or — since Java 21 — virtual threads, which let you write linear blocking code that scales like async.</p>
+    <div class="pair">
+      <div class="lang typescript"><div class="badge">TypeScript</div>
+<pre><code class="language-typescript">type Stats = { repo: string; stars: number; forks: number };
+
+async function fetchRepo(repo: string): Promise&lt;Stats&gt; {
+    const response = await fetch(`https://api.github.com/repos/${repo}`);
+    const data = await response.json();
+    return { repo, stars: data.stargazers_count, forks: data.forks };
+}
+
+const repos = ["microsoft/typescript", "openjdk/jdk"];
+const results = await Promise.all(repos.map(fetchRepo));
+
+results.forEach(r =>
+    console.log(`${r.repo}: ${r.stars} - ${r.forks}`));</code></pre>
+      </div>
+      <div class="lang java"><div class="badge">Java</div>
+<pre><code class="language-java">record Stats(String repo, int stars, int forks) {}
+
+CompletableFuture&lt;Stats&gt; fetchRepo(String repo) {
+    var client = HttpClient.newHttpClient();
+    var request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.github.com/repos/" + repo))
+        .build();
+
+    return client.sendAsync(request, BodyHandlers.ofString())
+        .thenApply(response -> parseStats(repo, response.body()));
+}
+
+var repos = List.of("microsoft/typescript", "openjdk/jdk");
+var futures = repos.stream().map(this::fetchRepo).toList();
+
+// Wait for all
+var results = futures.stream()
+    .map(CompletableFuture::join)
+    .toList();
+
+results.forEach(r ->
+    System.out.printf("%s: %d - %d%n", r.repo(), r.stars(), r.forks()));</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="ornament">❦ &nbsp; ❦ &nbsp; ❦</div>
+  <p>An informal Rosetta Stone — comparisons are illustrative, not exhaustive.<br>
+  Both languages have edges that can't be summarised in two columns.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+</body>
+</html>
